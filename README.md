@@ -21,4 +21,4 @@ There is also the option to find and plot feature keypoint matches between the t
 - NAED seems to be robust to image rotation, whereas L2 norm (Euclidean Distance) is not - likely because no pixels are changing color value in the rotation.
 - The lower the NAED score, the most similar
 - SSIM is not as robust to rotation as NAED, so be aware when comparing a target image augmented by rotation - SSIM will be poor, so it may not be best to use to include in overall similarity percentage if rotation does not matter for you.
-- Cosine similarity seems to be the best OVERALL similarity factor, so it's probably best to always have this option selected to include in overall similarity calculation.
+- Cosine similarity seems to be the ***best overall*** similarity factor, so it's probably best to always have this option selected to include in overall similarity calculation, with the option of scrutinizing the similarity score with the other two metrics.
