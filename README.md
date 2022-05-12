@@ -25,6 +25,7 @@ There is also the option to find and plot feature keypoint matches between the t
 - SSIM is not as robust to rotation as NAED, so be aware when comparing a target image augmented by rotation - SSIM will be poor, so it may not be best to use to include in overall similarity percentage if rotation does not matter for you.
 - Because SSIM is based on structural similarity, this score can be very low if the structural differences between the two images is high. For this reason, SSIM may not always be a desired option to include in total similarity calculation, especially if you do not care about structural similarity. Otherwise, SSIM is a good way to scrutinize similarity even further depending on how harsh you want to be on finding a similar image.
 - Cosine similarity seems to be the ***best overall*** similarity factor, so it's probably best to always have this option selected to include in overall similarity calculation, with the option of scrutinizing the similarity score with the other two metrics.
+- The similarity threshold values for each metric were chosen after running multiple tests on each metric to identify a good baseline value for "fairly similar" images - solely based on my idea of where a baseline for similarity falls by examining the many test results. They could be different, +/- a few points.
 
 ## Demo video
 https://user-images.githubusercontent.com/25640614/168156945-962c9a13-f097-44e3-8cb8-d72026d9a333.mp4
