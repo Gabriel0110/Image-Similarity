@@ -7,7 +7,7 @@ Play around with it here: https://share.streamlit.io/gabriel0110/image-similarit
 
 I wanted to build a solution for comparing image similarity, possibly to use in the future for building a recommendation system for images, e.g. image search. This project required me to research some metrics on image comparison and similarity, test, and play around with them. After research of some metrics, I put together this application to showcase them.
 
-Currently, there three optional metrics:
+Currently, there are three optional metrics:
 - Cosine Similarity
 - NAED (Neighbor-Average Euclidean Distance)
 - SSIM (Structural Similarity Index)
