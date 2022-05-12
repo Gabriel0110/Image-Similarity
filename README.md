@@ -14,7 +14,7 @@ Currently, there three optional metrics:
 
 ***Disclaimer**: NAED is not an official/formal metric for image similarity -- it is something that I came up with and tested, and it appears to be a fairly plausible similarity metric for images that I wanted to include as an option.*
 
-There is also the option to find and plot feature keypoint matches between the two images to include in your analysis of similarity if you wanted to.
+There is also the option to find and plot feature keypoint matches between the two images to include in your analysis of similarity if you wanted to. This uses RootSIFT, a variant of SIFT to find feature keypoints. My implementation is based off of Adrian Rosebrock's tutorial here: https://pyimagesearch.com/2015/04/13/implementing-rootsift-in-python-and-opencv/
 
 ## Findings on metric analysis
 
