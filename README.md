@@ -12,7 +12,7 @@ Currently, there are three optional metrics:
 - NAED (Neighbor-Average Euclidean Distance)
 - SSIM (Structural Similarity Index)
 
-***Disclaimer**: NAED is not an official/formal metric for image similarity -- it is something that I came up with and tested, and it appears to be a fairly plausible similarity metric for images that I wanted to include as an option.*
+***Disclaimer**: NAED is not an official/formal metric for image similarity -- it is something that I thought of and tested, and it appears to be a fairly plausible similarity metric for images that I wanted to include as an option.*
 
 The total similarity percentage score that is displayed after calculating the metrics is based on how many metrics you are using, e.g. 1/3 metrics == 100% (no split), 2/3 metrics == 50% split, 3/3 metrics == 33% split.
 
