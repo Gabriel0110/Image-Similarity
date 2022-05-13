@@ -155,7 +155,7 @@ if uploaded_ref_image is not None and uploaded_target_image is not None:
 
         if st.button("Find keypoints and similarity matches..."):
             rs_driver = RootSiftDriver()
-            matches, min_matches, kp_img1, kp_img2, feature_matches_img = rs_driver.run_sift(ref_img, target_img)
+            matches, max_matches, good_matches, kp_img1, kp_img2, feature_matches_img = rs_driver.run_sift(ref_img, target_img)
 
             col1, col2 = st.columns(2)
             with col1:
@@ -163,9 +163,10 @@ if uploaded_ref_image is not None and uploaded_target_image is not None:
             with col2:
                 col2.image(kp_img2, caption="Target image with keypoint markers", use_column_width=True)
 
-            st.image(feature_matches_img, caption="Feature similarity matches between the two images' keypoints", use_column_width=True)
+            st.image(feature_matches_img, caption="Good/high-quality feature similarity matches between the two images' keypoints", use_column_width=True)
             st.write("")
-            st.write(f"Out of {min_matches} possible keypoint matches, there were a total of {len(matches)} matches found between both images: {(len(matches) / min_matches)*100:.2f}%")
+            st.write(f"{len(matches)} keypoint matches were found out of {max_matches} possible matches ({(len(matches) / max_matches)*100:.2f}%)")
+            st.write(f"Out of the {len(matches)} matches found, {len(good_matches)} ({(len(good_matches) / len(matches))*100:.2f}%) were good, high quality matches based on Lowe's ratio.")
 
 st.write("")
 st.write("")

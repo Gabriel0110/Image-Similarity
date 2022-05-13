@@ -10,7 +10,7 @@ class RootSiftDriver:
         """
         self.detector = FeatureDetector_create("SIFT")
         self.rs = RootSIFT()
-        self.matcher = cv2.BFMatcher(cv2.NORM_L2, crossCheck=True)
+        self.matcher = cv2.BFMatcher()
         self.img1 = None
         self.img2 = None
         self.gray_img1 = None
@@ -46,16 +46,23 @@ class RootSiftDriver:
         # Using BFMatcher (brute force) here, as it going to be more accurate. FlannBasedMatcher is a much faster,
         # nearest neighbor (approximate) matcher that uses the KNN algorithm, but can be less accurate. FBM builds a KD-Tree,
         # which is an efficient data structure for searching nearest neighbors. FBM is great with large data sets (not my use case here).
-        matches = self.matcher.match(descs1, descs2)
-        matches = sorted(matches, key=lambda x: x.distance)
+        # Also going to use the knnMatch method with k=2
+        matches = self.matcher.knnMatch(descs1, descs2, k=2)
 
-        # Determine the minimum number of matches that can be found based on the image with the least amount of keypoints
-        min_matches = min(len(kps1), len(kps2))
+        # Apply Lowe's ratio test to filter out low quality matches
+        good_matches = []
+        for m, n in matches:
+            if m.distance < 0.75 * n.distance:
+                good_matches.append(m)
 
-        # Draw the matches onto an image with both images side-by-side
-        self.feature_matches_img = cv2.drawMatches(kp_img1, kps1, kp_img2, kps2, matches[:min_matches], kp_img2, flags=2)
+        # Determine the max number of matches that can be found based on the image with the most amount of keypoints
+        max_matches = max(len(kps1), len(kps2))
 
-        return matches, min_matches, kp_img1, kp_img2, self.feature_matches_img
+        # Draw only the good matches onto an image with both images side-by-side
+        #self.feature_matches_img = cv2.drawMatches(kp_img1, kps1, kp_img2, kps2, matches[:min_matches], kp_img2, flags=2)
+        self.feature_matches_img = cv2.drawMatches(kp_img1, kps1, kp_img2, kps2, good_matches, kp_img2, flags=2)
+
+        return matches, max_matches, good_matches, kp_img1, kp_img2, self.feature_matches_img
 
     def load_images(self, img1, img2):
         """
