@@ -52,7 +52,7 @@ class RootSiftDriver:
         # Apply Lowe's ratio test to filter out low quality matches
         good_matches = []
         for m, n in matches:
-            if m.distance < 0.75 * n.distance:
+            if m.distance < 0.7 * n.distance:
                 good_matches.append(m)
 
         # Determine the max number of matches that can be found based on the image with the most amount of keypoints
