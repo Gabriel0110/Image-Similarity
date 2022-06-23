@@ -3,6 +3,9 @@ from rootsift_driver import RootSiftDriver
 
 from image_similarity import *
 
+# Pre-load the efficientnet model as soon as program starts
+load_efficientnet_model()
+
 ref_img = None
 target_img = None
 pil_ref_img = None
@@ -44,8 +47,10 @@ if uploaded_ref_image is not None and uploaded_target_image is not None:
     cosine_check = st.checkbox("Cosine Similarity")
     naed_check = st.checkbox("NAED (Neighbor-Average Euclidean Distance)")
     ssim_check = st.checkbox("SSIM (Structural Similarity Index)")
+    feature_comp_l2_check = st.checkbox("Feature Comparison with Euclidean Distance")
+    feature_comp_cosine_check = st.checkbox("Feature Comparison with Cosine Similarity")
 
-    if cosine_check or naed_check or ssim_check:
+    if cosine_check or naed_check or ssim_check or feature_comp_l2_check or feature_comp_cosine_check:
         if st.button('Get Similarity Metrics'):
             # Determine the divisor for total percent calculation based on how many metrics are selected
             percent_proportion = 100.0 / sum([cosine_check, naed_check, ssim_check])
@@ -62,7 +67,7 @@ if uploaded_ref_image is not None and uploaded_target_image is not None:
 
                 naed_percent = (((((l2_percent_of_img_size) - L2_NA_THRESHOLD) * 100) / (0.0 - L2_NA_THRESHOLD)) * percent_proportion) / 100
                 total_percent += naed_percent
-                #print(naed_percent)
+                print(naed_percent)
 
             if ssim_check:
                 # Get SSIM value
@@ -71,7 +76,7 @@ if uploaded_ref_image is not None and uploaded_target_image is not None:
 
                 ssim_percent = ((((ssim_value - 0.0) * 100) / (1.0 - 0.0)) * percent_proportion) / 100
                 total_percent += ssim_percent
-                #print(ssim_percent)
+                print(ssim_percent)
 
             if cosine_check:
                 # Flatten to 1-D for cosine similarity
@@ -82,7 +87,15 @@ if uploaded_ref_image is not None and uploaded_target_image is not None:
 
                 cosine_sim_percent = ((((cosine_sim_value - 0.0) * 100) / (1.0 - 0.0)) * percent_proportion) / 100
                 total_percent += cosine_sim_percent
-                #print(cosine_sim_percent)
+                print(cosine_sim_percent)
+
+            if feature_comp_l2_check:
+                feature_comp_l2_score = get_feature_similarity_l2_norm(pil_ref_img, pil_target_img)
+                print(f"Feature similarity score with euclidean distance: {feature_comp_l2_score}")
+
+            if feature_comp_cosine_check:
+                feature_comp_cosine_score = get_feature_similarity_cosine(pil_ref_img, pil_target_img)
+                print(f"Feature similarity score with cosine similarity: {feature_comp_cosine_score}")
 
             if total_percent >= 90:
                 st.markdown("<div style='text-align: center'>The two images are <b>VERY SIMILAR</b></div>", unsafe_allow_html=True)
@@ -109,6 +122,10 @@ if uploaded_ref_image is not None and uploaded_target_image is not None:
                     st.metric("Neighbor-Average Euclidean Distance", f"{l2_na_value:.2f} ({normalized_l2_percent:.2f}%)")
                 if ssim_check:
                     st.metric("SSIM", f"{ssim_value:.6f}")
+                if feature_comp_l2_check:
+                    st.metric("Feature Similarity - Euclidean Distance", f"{feature_comp_l2_score}")
+                if feature_comp_cosine_check:
+                    st.metric("Feature Similarity - Cosine Similarity", f"{feature_comp_cosine_score}")
 
             with col2:
                 if cosine_check:
@@ -155,7 +172,7 @@ if uploaded_ref_image is not None and uploaded_target_image is not None:
 
         if st.button("Find keypoints and similarity matches..."):
             rs_driver = RootSiftDriver()
-            matches, max_matches, good_matches, kp_img1, kp_img2, feature_matches_img = rs_driver.run_sift(ref_img, target_img)
+            matches, min_matches, kp_img1, kp_img2, feature_matches_img = rs_driver.run_sift(ref_img, target_img)
 
             col1, col2 = st.columns(2)
             with col1:
@@ -163,10 +180,9 @@ if uploaded_ref_image is not None and uploaded_target_image is not None:
             with col2:
                 col2.image(kp_img2, caption="Target image with keypoint markers", use_column_width=True)
 
-            st.image(feature_matches_img, caption="Good/high-quality feature similarity matches between the two images' keypoints", use_column_width=True)
+            st.image(feature_matches_img, caption="Feature similarity matches between the two images' keypoints", use_column_width=True)
             st.write("")
-            st.write(f"{len(matches)} keypoint matches were found out of {max_matches} possible matches ({(len(matches) / max_matches)*100:.2f}%)")
-            st.write(f"Out of the {len(matches)} matches found, {len(good_matches)} ({(len(good_matches) / len(matches))*100:.2f}%) were good, high quality matches based on Lowe's ratio.")
+            st.write(f"Out of {min_matches} possible keypoint matches, there were a total of {len(matches)} matches found between both images: {(len(matches) / min_matches)*100:.2f}%")
 
 st.write("")
 st.write("")
