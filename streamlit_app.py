@@ -47,10 +47,11 @@ if uploaded_ref_image is not None and uploaded_target_image is not None:
     cosine_check = st.checkbox("Cosine Similarity")
     naed_check = st.checkbox("NAED (Neighbor-Average Euclidean Distance)")
     ssim_check = st.checkbox("SSIM (Structural Similarity Index)")
-    feature_comp_l2_check = st.checkbox("Feature Comparison with Euclidean Distance")
-    feature_comp_cosine_check = st.checkbox("Feature Comparison with Cosine Similarity")
+    st.write("")
+    feature_comp_l2_check = st.checkbox("Feature Comparison with Euclidean Distance (not included in score)")
+    feature_comp_cosine_check = st.checkbox("Feature Comparison with Cosine Similarity (not included in score)")
 
-    if cosine_check or naed_check or ssim_check or feature_comp_l2_check or feature_comp_cosine_check:
+    if cosine_check or naed_check or ssim_check:
         if st.button('Get Similarity Metrics'):
             # Determine the divisor for total percent calculation based on how many metrics are selected
             percent_proportion = 100.0 / sum([cosine_check, naed_check, ssim_check])
@@ -123,9 +124,11 @@ if uploaded_ref_image is not None and uploaded_target_image is not None:
                 if ssim_check:
                     st.metric("SSIM", f"{ssim_value:.6f}")
                 if feature_comp_l2_check:
-                    st.metric("Feature Similarity - Euclidean Distance", f"{feature_comp_l2_score}")
+                    st.write("")
+                    st.write("")
+                    st.metric("Feature Similarity - Euclidean Distance (not included in score)", f"{feature_comp_l2_score}")
                 if feature_comp_cosine_check:
-                    st.metric("Feature Similarity - Cosine Similarity", f"{feature_comp_cosine_score}")
+                    st.metric("Feature Similarity - Cosine Similarity (not included in score)", f"{feature_comp_cosine_score}")
 
             with col2:
                 if cosine_check:
