@@ -7,11 +7,19 @@ from skimage.metrics import structural_similarity as ssim
 import PIL
 from PIL import Image
 import imagehash
+from efficientnet_pytorch import EfficientNet
+from torchvision import transforms
+
 
 IMG_SIZE = (512, 512)
 COSINE_THRESHOLD = 0.8
 L2_NA_THRESHOLD = 1.0
 SSIM_THRESHOLD = 0.8
+MODEL = None
+
+def load_efficientnet_model():
+    global MODEL
+    MODEL = EfficientNet.from_pretrained('efficientnet-b0')
 
 def neighbor_avg(img):
     """
@@ -81,3 +89,30 @@ def get_pil_image(file):
     """
     img = Image.open(file)
     return resize_image_pil(img, IMG_SIZE)
+
+def get_feature_similarity_l2_norm(image1, image2):
+    global MODEL
+    image1_tensor = transforms.ToTensor()(image1)
+    image2_tensor = transforms.ToTensor()(image2)
+
+    features1 = MODEL.extract_features(image1_tensor.unsqueeze(0))
+    features2 = MODEL.extract_features(image2_tensor.unsqueeze(0))
+
+    value = round(np.linalg.norm(np.array(features1.detach()) - np.array(features2.detach())), 4)
+
+    return value
+
+def get_feature_similarity_cosine(image1, image2):
+    global MODEL
+    from torch import nn
+
+    image1_tensor = transforms.ToTensor()(image1)
+    image2_tensor = transforms.ToTensor()(image2)
+
+    features1 = MODEL.extract_features(image1_tensor.unsqueeze(0))
+    features2 = MODEL.extract_features(image2_tensor.unsqueeze(0))
+
+    cos = nn.CosineSimilarity(dim=0)
+    value = round(float(cos(features1.reshape(1, -1).squeeze(), features2.reshape(1, -1).squeeze())),4)
+
+    return value
